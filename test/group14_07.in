@@ -1,0 +1,20 @@
+createvfs java/fs 600
+createvfs javafs 4086
+createvfs javafs 1023
+mountvfs jvm
+mountvfs javafs
+makedir /program/course/ datastructures
+makedir /program/assignments/ 
+makedir /program/course/ networking
+makedir /program/course/ algorithms
+deletedir /program/course/cplusplus
+makedir /program/course/datastructures/ vfs
+deletedir /program/course
+listdir /program/course 1 /tmp/list1.txt
+listdir /program/course 0 /tmp/list2.txt
+updatefile /program/course/algorithms/qpaper.txt /usr/include/block.h
+removefile /program/course/algorithms/qpaper.txt
+removefile
+exportfile /program/course/algorithms/qpaper.txt /tmp/export.txt
+unmount jvm
+unmount javafs

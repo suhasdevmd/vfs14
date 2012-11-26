@@ -1,0 +1,24 @@
+mountvfs sample
+unmountvfs sample
+removefile /home/user/sample.txt
+createvfs sample 1
+unmountvfs sample
+createvfs demo 2
+mountvfs sample
+mountvfs demo
+makedir /electronics/laptops/ acer
+makedir /homeapp/cookers/ pigeon
+makedir /electronics/mobiles/ apple
+makedir /electronics/mobiles/ nokia/samsung
+addfile /electronics/laptops/acer/ review.txt /usr/include/poll.h
+makedir /electronics/laptops/ samsung
+addfile /electronics/laptops/samsung/ revi/ew.txt /usr/include/poll.h
+listfile /electronics/laptops/samsung/review.txt /tmp/list1.txt
+listdir /electronics/laptops/ 2 /tmp/listuser.txt
+copyfile  /home/user/sample.txt /home/ss/sample.txt
+searchfile review.txt /tmp/search.txt
+movefile /electronics/laptops/acer/review.txt /electronics/laptops/samsung/sample.txt
+addfile /electronics/laptops/acer/ review.txt /usr/include/poll.h
+unmountvfs demo
+unmountvfs sample
+addfile /electronics/laptops/acer/ ss.txt /usr/include/poll.h
