@@ -1,0 +1,21 @@
+createvfs DEMO 1025
+createvfs DEMO 1024
+mountvfs DEMO
+mountvfs DEMO
+addfile /ap/kc/ burger.txt /usr/include/poll.h
+addfile /ap/kc/ bg2.txt /usr/include/poll.h
+addfile /ap/kc/ bg3.txt /usr/include/poll.h
+makedir /pizza/ temp
+deletedir /burger
+listdir /ap/kc/ 2 /tmp/op.txt
+listdir /ap/kc/ 0 /tmp/op.txt
+addfile /ap/ bg1.txt /usr/include/poll.h
+addfile /ap/ bg2.txt /usr/include/poll.h
+addfile /pizza/temp bg2.txt /usr/include/poll.h
+searchfile bg2 /tmp/srch.txt
+copyfile  /home/user/sample.txt /ap/kc/ss.txt
+deletedir /ap/kc
+movedir /ap
+unmountvfs DEMO
+listdir /ap/kc 0 /tmp/op.txt
+

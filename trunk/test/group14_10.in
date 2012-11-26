@@ -1,0 +1,19 @@
+createvfs banking 1024
+deletedir /home/user/vfs
+mountvfs banking
+makedir /sbi/region1/ branches
+makedir /idbi/region4/ branches
+copyfile 
+makedir /icici/region3/ branches
+makedir /obc/region1/ branches
+makedir /karnatakabl/region4/ branches
+makedir /sbi/region1/branches/main employees
+addfile /sbi/region1/branches/main/employees/ employee.txt /usr/include/poll.h
+addfile /icici/region4/branches/main/employees/ employee.txt /usr/incluse/poll.h
+listfile /icici/region4/branches/main/employees/employee.txt /tmp/listing1.txt
+updatefile /icici/region4/branches/main/employees/employee.txt /usr/include/mainheader.h
+removefile /icici/region4/branches/main/employees/employee.txt
+listfile /icici/region4/branches/main/employees/employee.txt /tmp/listing2.txt
+listdir /icici/region4/branches/ 2 /tmp/listbranches.txt
+addfile /karnatakabl/region4/ samp/le.txt /usr/include/poll.h
+unmountvfs banking

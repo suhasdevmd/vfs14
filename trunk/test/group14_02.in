@@ -1,0 +1,23 @@
+createvfs vfs %
+createvfs vfs 1024
+makedir /ap/kc/ sss 
+mountvfs vfs 
+makedir /ap/ kc
+makedir //
+addfile /ap/ ap.txt /usr/include/poll.h 
+addfile /ap/ kcap.txt /usr/include/poll.h
+makedir /ap/kc/ sss
+makedir /ap/kc/sss/ sss1 
+makedir /ap/kc/ ss1
+searchfile sample.txt
+addfile /ap/kc/ ap.txt /usr/include/poll.h
+addfile /ap/kc/sss/ ap.txt /usr/include/poll.h
+addfile /ap/ ap1.txt /usr/include/poll.h
+movedir /ap/kc /ap/kc/sss
+movedir /ap/kc/sss /ap/kc/sss1
+deletedir /ap/kc
+deletedir /ap/vr/
+updatefile /ap/kc/ap.txt /usr/include/stdio.h
+removefile /ap/kc/sss/ap.txt
+exportfile /ap/kc/ap1.txt /tmp/ss.txt
+unmountvfs vfs 

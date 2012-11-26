@@ -1,0 +1,18 @@
+createvfs vfs 
+createvfs vfs 400
+mountvfs vfs 
+mountvfs vfs 
+makedir /home/movies/ oneday
+makedir /home/movies/ manfromearth
+makedir /home/movies/ unstoppable/ss
+makedir /home/songs/ linkinpark
+listdir /home/ 1 /tmp/list.txt
+addfile /home/movies/oneday/ review.txt /usr/include/poll.h
+listdir /home/ 4
+updatefile /home/movies/oneday/review.txt /usr/include/stab.h
+removefile
+removefile /home/movies/oneday/ratings.txt
+addfile /home/movies/manfromearth/ review.txt /usr/include/poll.h
+searchfile rev
+searchfile rev /tmp/search.txt
+unmountvfs vfs	

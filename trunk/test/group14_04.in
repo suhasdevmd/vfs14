@@ -1,0 +1,25 @@
+createvfs DEMO 10
+mountvfs DEMO
+makedir /poha/pudding/ sample 
+addfile /poha/pudding/ eat.txt /usr/include/block.h
+addfile /hl/ lst.txt /usr/include/mainheader.h
+movedir /poha/pudding/ /hl/
+movedir /pp/ /hl/
+deletedir /poha/pudding
+listdir /poha
+searchfile /hl/lst.txt
+searchfile eat /tmp/searchresults.txt
+makedir /ss/dm sd
+makedir /ss/dm sd1
+makedir /ss/dm sd2
+addfile /ss/dm/sd/ sample.txt /usr/include/poll.h
+addfile /ss/dm/sd1/ sample1.txt /usr/include/poll.h
+addfile /ss/dm/sd2/ sample2.txt /usr/include/poll.h
+copyfile /ss/dm/sd/sample.txt /ss/dm/sd1/sample1.txt
+updatefile /ss/dm/sd/sample.txt /usr/include/stab.h
+removefile
+removefile /ss/dm/sd/sample.txt
+unmountvfs DEMO
+
+
+
