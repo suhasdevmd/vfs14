@@ -13,6 +13,8 @@ void unmountNaryRoot();
 void list_dir_normal(char path[]);
 char* getNewPath(int count,char oldPath[] ,char *apendPath);
 void searchSubstringFile(char substring[]);
+void listDirRoot();
+
 
 char *listNames[100];  
 int listNamesIndex;
