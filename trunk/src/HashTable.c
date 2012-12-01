@@ -97,28 +97,28 @@ void deleteHash(struct file_descriptor fd)
 
 
 
-	//printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n ***** B4 Deletion in hash  ***** \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+	
 
 		if(strcmp(ptr->f_desc.file_name,fname)==0 && strcmp(ptr->f_desc.file_path,path)==0) 		  
 		{
 			hashTable[hashTableIndex]=ptr->next;
 
 
-			//printf("\n\n\n\n\n\n\n\ninside if of hash \n\n\n\n\n\n\n\n");
+			
 		}
 		else{
 			ptr=ptr->next;
 
-			//printf("\n\n\n\n\n\n\n\ninside else of hash \n\n\n\n\n\n\n\n");
+			
 
 			while(ptr != NULL){
 
-			//printf("\n\n\n\n\n\n\n\ninside while of hash \n\n\n\n\n\n\n\n");
+			
 				if(strcmp(ptr->f_desc.file_name,fname)==0 && strcmp(ptr->f_desc.file_path,path)==0)
 				{
 					ptrp->next=ptr->next;
 
-					//printf("\n\n\n\n\n\n\n\ninside if of while in hash \n\n\n\n\n\n\n\n");
+					
 
 				}				
     				ptrp=ptr;
@@ -126,7 +126,7 @@ void deleteHash(struct file_descriptor fd)
   			}
 		}
 
-	//printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n ***** Deletion in hash completed ***** \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+	
 
 
 }
@@ -141,7 +141,7 @@ void searchPaths(char fname[]){
 	struct node *temp=hashTable[hashTableIndex];
 
 
-	//printf("\n\n\n\n\n\n\n\n  b4 searhc paths hash ---- >>>>> \n\n\n\n\n\n\n\n\n");
+	
 
 
 
@@ -157,7 +157,7 @@ void searchPaths(char fname[]){
 		temp=temp->next;
 	}
 
-	//printf("\n\n\n\\nn\n\n\\n\n\n\\n\n\n\n\n\n Done search hash ..... **** \n\n\n\n\n\n\n\n\n\n\n\n");
+	
 
 }
 
@@ -214,28 +214,28 @@ void deleteHashWithPath(char path1[])
 
 
 
-	//printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n ***** B4 Deletion in hash  ***** \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+	
 
 		if(strcmp(ptr->f_desc.file_name,fname)==0 && strcmp(ptr->f_desc.file_path,path)==0) 		  
 		{
 			hashTable[hashTableIndex]=ptr->next;
 
 
-			//printf("\n\n\n\n\n\n\n\ninside if of hash \n\n\n\n\n\n\n\n");
+			
 		}
 		else{
 			ptr=ptr->next;
 
-			//printf("\n\n\n\n\n\n\n\ninside else of hash \n\n\n\n\n\n\n\n");
+			
 
 			while(ptr != NULL){
 
-			//printf("\n\n\n\n\n\n\n\ninside while of hash \n\n\n\n\n\n\n\n");
+			
 				if(strcmp(ptr->f_desc.file_name,fname)==0 && strcmp(ptr->f_desc.file_path,path)==0)
 				{
 					ptrp->next=ptr->next;
 
-					//printf("\n\n\n\n\n\n\n\ninside if of while in hash \n\n\n\n\n\n\n\n");
+					
 
 				}				
     				ptrp=ptr;
@@ -243,7 +243,7 @@ void deleteHashWithPath(char path1[])
   			}
 		}
 
-	//printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n ***** Deletion in hash completed ***** \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+	
 
 
 }

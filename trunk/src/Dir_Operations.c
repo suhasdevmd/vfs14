@@ -31,6 +31,55 @@ int getFreeListIndex(){
 }
 
 
+// func to print to file
+
+
+int printToFile(char *out){
+
+	char out_file[200];
+	strcpy(out_file,out);
+	int i;
+
+
+
+	FILE *fp=fopen(out_file,"w");
+
+	if(fp==NULL)
+	{
+		printf("listdir_FAILURE %s\n",ERR_VFS_LISTDIR_04);// cannot create output file
+		return 0;
+	
+	}
+	else
+	{
+
+		
+
+		//strcat(substring," found in the following locations : \n\n");
+		//fwrite(substring,strlen(substring),1,fp);
+		
+
+
+		for(i=0;i<listindex;i++){
+			//strcat(i+1,listPaths[i]);
+			fwrite(listarr[i],strlen(listarr[i]),1,fp);
+			fwrite("\n",1,1,fp);
+
+		}
+		fclose(fp);
+	}		
+
+
+	return 1;
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -52,26 +101,27 @@ void make_dir ( char *parent_path, char *dir_name)
 	strcpy(dirname,dir_name);
 
 
+	if(mount_status==0)
+	{
+		printf("makedir_FAILURE %s\n",ERR_VFS_MAKEDIR_05);// vfs not mounted
+		return;
+	}
+
 
 	if(strlen(path)==0 || strlen(dirname)==0)
 	{
-		printf("%s\n","makedir_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
+		printf("makedir_FAILURE %s\n",ERR_VFS_MAKEDIR_00);// vfs insufficient arguments
 		return;
 	}
 
 
-	if(mount_status==0)
-	{
-		printf("%s\n","makedir_FAILURE <VFS_NOT_MOUNTED>");
-		return;
-	}
-
+	
 
 	for(i=0;i<strlen(dirname);i++)
 	{
 		if(dirname[i]=='/')
 		{
-			printf("%s\n","makedir_FAILURE <INVALID_CHARACTER_IN_DIRNAME>");
+			printf("makedir_FAILURE %s\n",ERR_VFS_MAKEDIR_02);// invalid character in dir name
 			return;
 		}
 	}
@@ -90,7 +140,7 @@ void make_dir ( char *parent_path, char *dir_name)
 
 	if(i>no_of_blocks)
 	{
-		printf("%s\n","makedir_FAILURE <FILE_SYSTEM_FULL>");
+		printf("makedir_FAILURE %s\n",ERR_VFS_MAKEDIR_01);// file system full
 		return;
 	}
 
@@ -110,7 +160,7 @@ void make_dir ( char *parent_path, char *dir_name)
 	else 
 	{
 		clearBst();
-		printf("%s\n","makedir_FAILURE <DIRECTORY_ALREADY_EXISTS>");
+		printf("makedir_FAILURE %s\n",ERR_VFS_MAKEDIR_03);// directory already exists
 		return;
 	}
 
@@ -140,7 +190,7 @@ void delete_dir ( char *path )
 	
 	if(strlen(dir_path)==0)
 	{
-		printf("%s\n","deletedir_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
+		printf("deletedir_FAILURE %s\n",ERR_VFS_DELETEDIR_00);// insufficient arguments
 		return;
 	}
 
@@ -148,7 +198,7 @@ void delete_dir ( char *path )
 
 	if(mount_status==0)
 	{
-		printf("%s\n","deletedir_FAILURE <VFS_NOT_MOUNTED>");
+		printf("deletedir_FAILURE %s\n",ERR_VFS_DELETEDIR_04); //vfs not mounted
 		return;
 	}
 
@@ -177,7 +227,7 @@ void delete_dir ( char *path )
 			}
 			else 
 			{
-				printf("%s\n","deletedir_FAILURE <DIRECTORY_IS_NOT_EMPTY>");
+				printf("deletedir_FAILURE %s\n",ERR_VFS_DELETEDIR_02); // directory is not empty
 				return;
 			}
 
@@ -185,7 +235,7 @@ void delete_dir ( char *path )
 		}
 		else 
 		{	
-			printf("%s\n","deletedir_FAILURE <CANNOT_FIND_SPECIFIED_DIR>");
+			printf("deletedir_FAILURE %s\n",ERR_VFS_DELETEDIR_01); //cannot find specified dir
 			return;
 		}
 
@@ -233,9 +283,12 @@ void move_dir ( char *source_dir_path, char *dest_dir_path )
 	strcpy(sourcePath,source_dir_path);
 
 
+	//puts(destPath);
+
+
 	if(strlen(sourcePath)==0 || strlen(destPath)==0)
 	{
-		printf("%s\n","movedir_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
+		printf("movedir_FAILURE %s\n",ERR_VFS_MOVEDIR_00); //Insufficient arguments
 		return;
 	}
 
@@ -243,10 +296,22 @@ void move_dir ( char *source_dir_path, char *dest_dir_path )
 
 	if(mount_status==0)
 	{
-		printf("%s\n","movedir_FAILURE <VFS_NOT_MOUNTED>");
+		printf("movedir_FAILURE %s\n",ERR_VFS_MOVEDIR_08); //vfs not mounted
 		return;
 	}
 
+
+
+	char destpath[200];
+	char srcpath[200];
+	strcpy(destpath,destPath);
+	strcpy(srcpath,sourcePath);
+	int move=invalidMove(destpath,srcpath);
+	if(move==1) 
+	{		
+		printf("movedir_FAILURE %s\n",ERR_VFS_MOVEDIR_06); //cannot move parent to child
+		return;
+	}
 
 
 
@@ -261,14 +326,14 @@ void move_dir ( char *source_dir_path, char *dest_dir_path )
 		int i=searchIfPathExists(sourcePath);
 		if(i==0)
 		{
-			printf("%s\n","movedir_FAILURE <CANNOT_FIND_SPECIFIED_SOURCEDIR>");
+			printf("movedir_FAILURE %s\n",ERR_VFS_MOVEDIR_01); //cannot find specified source dir
 			return;
 		}		
 
 		int j=searchIfPathExists(destPath);
 		if(j==0)
 		{
-			printf("%s\n","movedir_FAILURE <CANNOT_FIND_SPECIFIED_DESTINATIONDIR>");
+			printf("movedir_FAILURE %s\n",ERR_VFS_MOVEDIR_02); //cannot find specified dest dir
 			return;
 		}
 
@@ -279,16 +344,18 @@ void move_dir ( char *source_dir_path, char *dest_dir_path )
 			struct file_descriptor *fd_src=searchAndGetFD(sourcePath);
 			struct file_descriptor *fd_dst=searchAndGetFD(destPath);
 
-
-			if(strcmp(fd_src->file_type,"file")==0)
+			if(fd_src==NULL);
+			else if(strcmp(fd_src->file_type,"file")==0)
 			{
-				printf("movedir_FAILURE <SOURCE_CANNOT_BE_FILE>");
+				printf("movedir_FAILURE %s\n",ERR_VFS_MOVEDIR_04); // source cannot be file
 				return;
 			}
 
-			if(strcmp(fd_dst->file_type,"file")==0)
+
+			if(fd_dst==NULL);
+			else if(strcmp(fd_dst->file_type,"file")==0)
 			{
-				printf("movedir_FAILURE <DESTINATION_CANNOT_BE_FILE>");
+				printf("movedir_FAILURE %s\n",ERR_VFS_MOVEDIR_07); //destination cannot be file
 				return;
 			}
 
@@ -307,7 +374,7 @@ void move_dir ( char *source_dir_path, char *dest_dir_path )
 
 			if(fd_chk!=NULL)
 			{
-				printf("movedir_FAILURE <DESTINATION_ALREADY_HAVE_SOURCE_DIR>");
+				printf("movedir_FAILURE %s\n",ERR_VFS_MOVEDIR_05); //dest already has source dir
 				return;
 			}
 			
@@ -315,7 +382,7 @@ void move_dir ( char *source_dir_path, char *dest_dir_path )
 
 			strcpy(sendpath,sourcePath);
 			del_dir_file(sendpath);
-			displayNaryMain();
+			//displayNaryMain();
 
 			//printf("\n\n\n\n \n\n\n\n\n deleted from Nary .******************************\n\n\n\n\n");
 
@@ -386,59 +453,92 @@ void list_dir ( char *dir_name, int flag, char *output_file_name ){
 	char dirname[200];
 	char outfile[200];
 
+		if(mount_status==0)
+	{
+		printf("listdir_FAILURE %s\n",ERR_VFS_LISTDIR_03); //vfs not mounted
+		return;
+	}
+
 	strcpy(dirname,dir_name);
 	strcpy(outfile,output_file_name);
 	int i;
 
+	
+	if(strlen(dirname)==0 || strlen(outfile)==0)
+	{
+		printf("listdir_FAILURE %s\n",ERR_VFS_LISTDIR_00); //insufficient arguments
+		return;
+	}
+
+	
+	
+	if(strcmp(dirname,"ROOT")==0){
+		listarr[400]=NULL;
+		listindex=0;
+		listDirRoot();
+		printf("listdir_SUCCESS\n");
+		return;
+
+	}
+
+
+	//printf("--------->  > > > > %s\n",dirname);
+	
 	struct file_descriptor *fd=searchAndGetFD(dirname);
+	
+	//printf("***** ---> %s\n",fd->file_type);
+
+
+	if(fd==NULL)//;
+	//else if(fd->location_block_number!=-1)
+	{
+		printf("listdir_FAILURE %s\n",ERR_VFS_LISTDIR_01); // cannot find specified path or dir
+		return;
+	}
+
+
+	
+
 
 	if(fd->location_block_number!=-1)
 	{
-		printf("%s\n","listdir_FAILURE <CANNOT_FIND_SPECIFIED_PATH_OR_DIR>");
+		printf("listdir_FAILURE %s\n",ERR_VFS_LISTDIR_01); // cannot find specified path or dir
 		return;
 	}
-
-
-
-	if(strlen(dirname)==0 || strlen(outfile)==0)
-	{
-		printf("%s\n","listdir_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
-		return;
-	}
-
-
-
-	if(mount_status==0)
-	{
-		printf("%s\n","listdir_FAILURE <VFS_NOT_MOUNTED>");
-		return;
-	}
-
-
+	
 
 	if(strcmp(dirname,"ROOT")==0)
 		i=1;
 	else i=searchIfPathExists(dirname);
 	if(i==1)
-	{
+	{	
+		//printf("\n\n\n\n\n\n");
+		//printf("list in dir\n\n\n");
+		listarr[400]=NULL;
+		listindex=0;
 		if(flag==0)
 			list_dir_normal(dirname);	
 		else if (flag==1)
  			recursive_list(dirname);
 		else 
 		{
-			printf("%s\n","listdir_FAILURE <INVALID_FLAG>");								
+			printf("listdir_FAILURE %s\n",ERR_VFS_LISTDIR_02); //invalid flag 								
 			return;
 		}
+		
+		int kl=printToFile(output_file_name);
+		
+		if(kl==0)return;
+
 	}
 	else
 	{
-		printf("%s\n","listdir_FAILURE <CANNOT_FIND_SPECIFIED_PATH_OR_DIR>");
+		printf("listdir_FAILURE %s\n",ERR_VFS_LISTDIR_01); //cannot find specified path or dir
 		return;
 	}
 
 
-
+	
 	printf("%s\n","listdir_SUCCESS");
 	//printf("\n Displaying the contents of Data structure . \n");
 	//displayNaryMain();
@@ -448,35 +548,54 @@ void list_dir ( char *dir_name, int flag, char *output_file_name ){
 }
 
 
-//*********************************************         by rupali ,added a function in hash also : void searchPaths(char fname[]); 
-/*
-void list_dir ( char *dir_name, int flag, char *output_file_name )
+
+
+
+
+int invalidMove(char destpath[],char srcpath[])
 {
-	char *list[100]; // declare it globally
-//	void searchPaths(char fname[]);       declaration globally
-	char dirname[200];
-	char flag[10];
-
-	strcpy(dirname,dir_name);
-		searchPaths(dirname);
-	if(list==NULL)
-		printf("directory doesnt exist");
-	else{
-		while(list[k]!=NULL){
-		//	printf("%s",list[k]);
-
-			
-
-
-			k++;
-		}		
+	char *tokensrc[100];
+	char *tokendest[100];
+	int countsrc=0;
+	int countdest=0;
+	tokensrc[countsrc]=strtok(srcpath,"/");
+ 	while(tokensrc[countsrc]!=NULL)
+        { 
+           countsrc++;
+           tokensrc[countsrc]=strtok(NULL,"/");//storing the tokens in the array of char pointers pointing to each token
+           
+        }
+	int i;
+	//for(i=0;i<countsrc;i++)
+	//	printf("%s",tokensrc[i]);
 
 
+	tokendest[countdest]=strtok(destpath,"/");
+ 	while(tokendest[countdest]!=NULL)
+        { 
+           countdest++;
+           tokendest[countdest]=strtok(NULL,"/");//storing the tokens in the array of char pointers pointing to each token
+           
+        }
+
+	//for(i=0;i<countdest;i++)
+	//printf("%s",tokendest[i]);
+
+
+
+	if(countdest>countsrc)
+	{
+		
+		for(i=0;i<countsrc;i++)
+		{	
+			if(strcmp(tokensrc[i],tokendest[i])==0);
+			else break;	
+	
+		}
+
+		if(i==countsrc)
+		return 1;
 	}
-	// listdir();
+	return 0;
+
 }
-*/
-
-//void list_dir(char path[]);  void recursive_list(char path[]); global declaration
-//  
-

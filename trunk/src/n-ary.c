@@ -27,7 +27,8 @@ root=NULL;
 
 
 void naryRoot()
-{	//printf("inside nary root\n");
+{	
+	//printf("inside nary root\n");
 	//struct dirNode *root;
 	root=getnode();
 	strcpy(root->fileDesc.file_name,"ROOT");
@@ -48,6 +49,24 @@ void displayNAry(struct dirNode *d)//function to display the filedescriptor name
 		displayNAry(d->firstChild);
 	}
 }          
+
+
+
+
+void printreclist(struct dirNode *d)//function to display the filedescriptor names stored in the nodes of narytree in preorder manner
+{
+
+	if(d!=NULL)
+	{
+		listarr[listindex]=d->fileDesc.file_name;
+		listindex=listindex+1;//printf("\t%s",start->fileDesc.file_name);
+		//printf("%s\n",d->fileDesc.file_name);
+		printreclist(d->rightSibling);
+		printreclist(d->firstChild);
+	}
+}          
+
+
 
 
 void unmountNary(struct dirNode *d)//function to store the filedescriptor names stored in the nodes of narytree to the fd array
@@ -134,7 +153,7 @@ void insertToNarry(struct file_descriptor fd)//function to insert the nodes othe
         start=start->firstChild;
          while(i<count)//checking from token[i=1] as token[i=0] contains root and its checking done in IF statement b4.
           {
-             while((strcmp(tokens[i],start->fileDesc.file_name)!=0)){//compare d present token with d firstchild,traverse thru right
+             while((strcmp(tokens[i],start->fileDesc.file_name)!=0) && start->rightSibling!=NULL){//compare d present token with d firstchild,traverse thru right
                   if(start->rightSibling==NULL){
                      match=1;match1=1;
                      break;
@@ -322,8 +341,8 @@ void del_root(char path[])
   		free(temp);
   		start->firstChild=NULL;
 	}
-	else
-	printf("No files or directories are present under ROOT to be deleted\n");
+	else;
+	//printf("No files or directories are present under ROOT to be deleted\n");
 }
 
 
@@ -337,13 +356,13 @@ void del_dir_file(char path[])
 //displayNAry(root);
 
  
-
-
+	
+	
 	baseFdescarray=0;
  	fd_count=0; //count of files and folders to be deleted
 	Fdesc=(struct file_descriptor *)NULL;// files to be deleted
 
-
+	
 
 
 	struct dirNode *start,*prev,*t,*temp;
@@ -351,7 +370,7 @@ void del_dir_file(char path[])
  	char *tokens[100];
  	tokens[count]=strtok(path,"/");
 	start=root;
-
+	
 
 	while(tokens[count]!=NULL)
      	{ 
@@ -359,14 +378,7 @@ void del_dir_file(char path[])
            tokens[count]=strtok(NULL,"/");//storing the tokens in the array of char pointers pointing to each token
            
       	}
-	//printf("TOKENS: ");
-	for(j=0; j<count; j++)
-	{
-		//printf("\t%s",tokens[j]);
-	}
-	//printf("\n");
-	//printf("Count: %d\n",count);
- 
+	
   
   	if(tokens[i]!=NULL)
    	{  
@@ -374,34 +386,44 @@ void del_dir_file(char path[])
       		if(count>2) 
       			start=start->firstChild;
        
-	
-     ///printf("%s",start->fileDesc.fileName);
-	
+		
          	while(i<count-1)//checking from token[i=1] as token[i=0] contains root and its checking done in IF statement b4.
           	{
-		
-             		while((strcmp(tokens[i],start->fileDesc.file_name)!=0)){//compare the present token with the firstchild,traverse thru rightsibling til a match  
+			
+			
+             		while((strcmp(tokens[i],start->fileDesc.file_name)!=0) && start->rightSibling!=NULL){//compare the present token with the firstchild,traverse thru rightsibling til a match  
 			
                    	start=start->rightSibling;
                    
               		}
+			
                    	if(start->firstChild!=NULL && i<(count-2))//after the match is found go to the first child 
                   	{ 
                      		start=start->firstChild;
                   	}
              		i++;
+	
            	} 
-           
+        
            	prev=start;
+
+
+
            	temp=start->firstChild;
-            	while((strcmp(tokens[i],temp->fileDesc.file_name)!=0)){//compare the present token with the firstchild,traverse thru rightsibling til a match       
-                k++;
+                
+
+            	while((strcmp(tokens[i],temp->fileDesc.file_name)!=0) && temp->rightSibling!=NULL){//compare the present token with the firstchild,traverse thru rightsibling til a match 
+      
+               
+
+                 k++;
                 prev=temp;
+
                 temp=temp->rightSibling;
                    
              }
             
-            
+    
            t=temp;
            
            
@@ -415,77 +437,88 @@ void del_dir_file(char path[])
            if(k==0) 
 		{
            prev->firstChild=temp->rightSibling;
-	 }
+	   }
           else
              prev->rightSibling=temp->rightSibling;
              free(temp);
      }
                 
- 
-//	printf("\n *************************************\n displaying nary after deletion \n /*****************************************************\n");
-//displayNAry(root);
-//printf("\n *****************************************\n");
-
-	
-
-
-
-	//for(i=0;i<fd_count;i++)
-		//printf("\n )))))))))))))  name :%s   and path=%s \n",Fdesc[i].file_name,Fdesc[i].file_path);
+ 	
 
 
 
 }
 
+//char *listarr[400];
+//int listindex=0;
 void list_dir_normal(char path[])//function to display the filedescriptor names stored in the nodes of narytree in preorder manner
 {
+
+
+
  struct dirNode *start;
  int count=0,i=1, j=0;
  char *tokens[100];
  char s[200];
+ char rupali[200];
+ strcpy(rupali,path);
  tokens[count]=strtok(path,"/");//breaking the path into tokens
 
 
 
+
+
+
+
+
+//if(strcmp(rupali,"ROOT")!=0)
+//{
     start=root;
     while(tokens[count]!=NULL)
      { 
            count++;
            tokens[count]=strtok(NULL,"/");//storing the tokens in the array of char pointers pointing to each token
            
-      }
-	printf("TOKENS: ");
+     }
+//}
+	//printf("TOKENS: ");
 	for(j=0; j<count; j++)
 	{
-		printf("\t%s",tokens[j]);
+		//printf("\t%s",tokens[j]);
 	}
-	printf("\n");
+
+	
+	//printf("\n");
 	//listIndex=count;
-	printf("Count: %d\n",count);
+	//printf("Count: %d\n",count);
      	strcpy(s,tokens[count-1]);
-	printf("\nLast token=%s\n",s);
-  if(!strcmp(start->fileDesc.file_name,s))
-   {
-     start=start->firstChild;
-	printf("List: ");
-     while(start!=NULL){
-         printf("\t%s",start->fileDesc.file_name);
-         start=start->rightSibling;
-       }
-	printf("\n");
+	//printf("\nLast token=%s\n",s);
+
+  	if(!strcmp(start->fileDesc.file_name,s))
+   	{
+     		start=start->firstChild;
+		//printf("List: ");
+     		while(start!=NULL)
+		{
+       		 	
+			listarr[listindex]=start->fileDesc.file_name;
+			listindex=listindex+1;//printf("\t%s",start->fileDesc.file_name);
+       		  	start=start->rightSibling;
+       		}
+		//printf("\n");
 	
-  }
-  else
-   {
+  	}
+  	else
+   	{
 	
-     start=start->firstChild;
+     		start=start->firstChild;
 	
-     ///printf("%s",start->fileDesc.fileName);
+     	///printf("%s",start->fileDesc.fileName);
 	
-         while(i<count-1)//checking from token[i=1] as token[i=0] contains root and its checking done in IF statement b4.
-          {
+        while(i<count-1)//checking from token[i=1] as token[i=0] contains root and its checking done in IF statement b4.
+        {
 		
-             while((strcmp(tokens[i],start->fileDesc.file_name)!=0)){//compare the present token with the firstchild,traverse thru rightsibling til a match  
+             while((strcmp(tokens[i],start->fileDesc.file_name)!=0) && start->rightSibling!=NULL){//compare the present token with the firstchild,traverse thru rightsibling til a match  
 			
                    start=start->rightSibling;
                    
@@ -495,22 +528,26 @@ void list_dir_normal(char path[])//function to display the filedescriptor names 
                      start=start->firstChild;
                   }
              i++;
-           }
-         while(strcmp(start->fileDesc.file_name,s))
+         }
+         while(strcmp(start->fileDesc.file_name,s) && start->rightSibling!=NULL)
             start=start->rightSibling;
-          if(start->firstChild==NULL)
-           printf("No files or Directories present\n");
+          if(start->firstChild==NULL);
+           //printf("No files or Directories present\n");
           else
             {
                start=start->firstChild;
-		printf("List: ");
+		//printf("List: ");
                do{
-         printf("\t%s",start->fileDesc.file_name);
+         
+		listarr[listindex]=start->fileDesc.file_name;
+			listindex=listindex+1;//printf("\t%s",start->fileDesc.file_name);
+
+		//printf("\t%s",start->fileDesc.file_name);
          start=start->rightSibling;
                  }while(start!=NULL);
-		printf("\n");
+		//printf("\n");
            }
-  }
+  	}
 }
 
 
@@ -532,7 +569,7 @@ int list_dir_for_deletion(char path[])//function to display the filedescriptor n
 	//printf("TOKENS: ");
 	for(j=0; j<count; j++)
 	{
-		printf("\t%s",tokens[j]);
+		//printf("\t%s",tokens[j]);
 	}
 	//printf("\n");
 	//listindex=count;
@@ -561,7 +598,7 @@ int list_dir_for_deletion(char path[])//function to display the filedescriptor n
          while(i<count-1)//checking from token[i=1] as token[i=0] contains root and its checking done in IF statement b4.
           {
 		
-             while((strcmp(tokens[i],start->fileDesc.file_name)!=0)){//compare the present token with the firstchild,traverse thru rightsibling til a match  
+             while((strcmp(tokens[i],start->fileDesc.file_name)!=0) && start->rightSibling!=NULL){//compare the present token with the firstchild,traverse thru rightsibling til a match  
 			
                    start=start->rightSibling;
                    
@@ -574,20 +611,20 @@ int list_dir_for_deletion(char path[])//function to display the filedescriptor n
              	i++;
           }
          
-	while(strcmp(start->fileDesc.file_name,s))
+	while(strcmp(start->fileDesc.file_name,s) && start->rightSibling!=NULL)
             start=start->rightSibling;
           if(start->firstChild==NULL)
-           	return 1; // u can delete 
+           	return 1;  
           else{
  	  start=start->firstChild;
-		printf("List: ");
+		//printf("List: ");
                do{
  	        //printf("\t%s",start->fileDesc.file_name);
  	        start=start->rightSibling;
                  }while(start!=NULL);
 		//printf("\n");
         
-          	return 0; // u cannot delete
+          	return 0; 
   }}
 return 1;
 }
@@ -609,21 +646,21 @@ void recursive_list(char path[])
            tokens[count]=strtok(NULL,"/");//storing the tokens in the array of char pointers pointing to each token
            
       }
-	printf("TOKENS: ");
+	//printf("TOKENS: ");
 	for(j=0; j<count; j++)
 	{
-		printf("\t%s",tokens[j]);
+		//printf("\t%s",tokens[j]);
 	}
-	printf("\n");
-	printf("Count: %d\n",count);
+	//printf("\n");
+	//printf("Count: %d\n",count);
      	strcpy(s,tokens[count-1]);
-	printf("\nLast token=%s\n",s);
+	//printf("\nLast token=%s\n",s);
   if(!strcmp(start->fileDesc.file_name,s))
    {
 	
      start=start->firstChild;
-     printf("LIST : ");
-     displayNAry(start);
+     //printf("LIST : ");
+     printreclist(start);
    }
 else
    {
@@ -635,7 +672,7 @@ else
          while(i<count-1)//checking from token[i=1] as token[i=0] contains root and its checking done in IF statement b4.
           {
 		
-             while((strcmp(tokens[i],start->fileDesc.file_name)!=0)){//compare the present token with the firstchild,traverse thru rightsibling til a match  
+             while((strcmp(tokens[i],start->fileDesc.file_name)!=0) && start->rightSibling!=NULL){//compare the present token with the firstchild,traverse thru rightsibling til a match  
 			
                    start=start->rightSibling;
                    
@@ -646,15 +683,15 @@ else
                   }
              i++;
            }
-         while(strcmp(start->fileDesc.file_name,s))
+         while(strcmp(start->fileDesc.file_name,s) && start->rightSibling!=NULL)
             start=start->rightSibling;
-          if(start->firstChild==NULL)
-           printf("No files or Directories present\n");
+          if(start->firstChild==NULL);
+           //printf("No files or Directories present\n");
           else
             {
                start=start->firstChild;
 		//printf("List: ");
-                displayNAry(start);
+                printreclist(start);
                 
            }
       
@@ -708,8 +745,30 @@ void searchSubstringFile(char substring[])
 	listNamesIndex=0;
 	*listNames=NULL;
 	displayNaryForSearch(root,substring);
+	
 
 
+}
+
+void listDirRoot()
+{
+ 	struct dirNode *start;
+     	start=root;
+	if(start->firstChild==NULL);
+	//printf("nothing inside root");
+    	else{
+		start=start->firstChild;      
+         	while(start->rightSibling!=NULL)
+		{		
+			listarr[listindex]=start->fileDesc.file_name;
+			listindex=listindex+1;		
+			start=start->rightSibling;
+
+		}
+		listarr[listindex]=start->fileDesc.file_name;
+			listindex=listindex+1;	
+  
+	}
 
 }
 
@@ -729,7 +788,6 @@ void displayNaryForSearch(struct dirNode *d,char substring[])
 			if(match==1)
 			{
 				listNames[listNamesIndex]=d->fileDesc.file_name;
-				//printf("\n\n\n\n\n\n\\n\n\n\n\\n\n\n\n\n\n\n\n\n\\n\n\n  %s=========================",d->fileDesc.file_name);
 				listNamesIndex++;
 			}
 		}
@@ -779,6 +837,10 @@ void displayNaryMain(){
 displayNAry(root);
 
 }
+
+
+
+
 
 
 
