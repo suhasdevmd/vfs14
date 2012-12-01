@@ -9,28 +9,27 @@ void create_vfs(char filelabel[],long int size)
 {
 	FILE *fp;
 	char a[1000000]={'a'};
-	//char (*suhas)[];
 	int i,ss;
 
-	mount_status=0;
+	//mount_status=0;
 
 
 	if(strlen(filelabel)==0 || size==0)
 	{
-		printf("%s\n","createvfs_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
+		printf("createvfs_FAILURE %s\n",ERR_VFS_CREATE_00); //Insufficient Arguments
 		return;
 	}
 
 	if(size<1 || size>1024)
 	{
-		printf("%s\n","createvfs_FAILURE <INVALID_SIZE>");
+		printf("createvfs_FAILURE %s\n",ERR_VFS_CREATE_04); //Invalid Size
 		return;
 	}
 
 
 	if(strlen(filelabel)>30)
 	{
-		printf("%s\n","createvfs_FAILURE <VFS_LABEL_TOO_LARGE>");
+		printf("createvfs_FAILURE %s\n",ERR_VFS_CREATE_05); //Label too large
 		return;
 	}
 
@@ -39,7 +38,7 @@ void create_vfs(char filelabel[],long int size)
 	{
 		if(filelabel[i]=='/')
 		{
-			printf("%s\n","createvfs_FAILURE <INVALID_CHARACTER_IN_NAME>");
+			printf("createvfs_FAILURE %s\n",ERR_VFS_CREATE_03); //Invalid character in name
 			return;
 		}
 	}
@@ -50,26 +49,7 @@ void create_vfs(char filelabel[],long int size)
 
 	no_of_blocks=(int)(size*1024)/BLOCK_SIZE;
 
-	//printf("%d\n ------ > is the no of blocks ",no_of_blocks);
-
-
-	//suhas=(char *)malloc(sizeof(char)*1000000);
 	
-	
-	// declared mainheader structure in the .h file
-
-
-	// ************* initializing the global variables ***********
-
-	//fd_count=0; //count of files and folders to be deleted
-	//Fdesc=(struct file_descriptor *)NULL;// files to be deleted
-
-	// ************ initialization ends **************************
-
-	//creating the large binary file
-
-
-	//----char path[100]="/home/suhasdev/Desktop/VfsProject/";
 	char path[100]="../";
 	strcat(path,filelabel);
 
@@ -78,8 +58,7 @@ void create_vfs(char filelabel[],long int size)
 
 	if(access(path,F_OK)!=-1)
 	{
-		printf("%s\n","createvfs_FAILURE <DATA_FILE_ALREADY_EXISTS>");
-		printf("\n");
+		printf("createvfs_FAILURE %s\n",ERR_VFS_CREATE_01);// File already exists
 		return;
 	}
 
@@ -91,7 +70,7 @@ void create_vfs(char filelabel[],long int size)
 
 	if(fp==NULL)
 	{
-		printf("%s\n","createvfs_FAILURE <CANNOT_CREATE_DATAFILE>");
+		printf("createvfs_FAILURE %s\n",ERR_VFS_CREATE_02);// cannot create datafile
 	}
 	else
 	{
@@ -143,7 +122,7 @@ void create_vfs(char filelabel[],long int size)
 	// declared file descriptor array in the header file
 
 
-	// ***************************** initializing fd_index and free_list array to 0  *********************************
+	
 	for(i=0;i<mheader.max_file_desc;i++)
 	{
 		//f_desc[i].location_block_number=i;
@@ -173,25 +152,10 @@ void create_vfs(char filelabel[],long int size)
 
 
 	printf("%s\n","createvfs_SUCCESS");
+	mount_status=0;
 
 
 
-
-
-	// written for testing purpose -------------(to be removed)----------->
-
-	//printf("\nReading the VFS name ---------> \n");
-	//reading the contents of the file
-	struct block b;
-	char m[100];
-
-	struct mainheader mh;
-	FILE *fp1=fopen(path,"rb+");
-	fread(&mh,sizeof(struct mainheader),1,fp1);
-	//printf("\n%s\n",mh.file_sys_label);
-	fclose(fp1);
-
-	// ---------- to be removed -------------------------------
 
 
 
@@ -209,7 +173,7 @@ void mount_vfs(char filelabel[]){
 	
 	if(strlen(filelabel)==0)
 	{
-		printf("%s\n","mountvfs_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
+		printf("mountvfs_FAILURE %s\n",ERR_VFS_MOUNT_00); //Insufficient arguments
 		return;
 	}
 
@@ -231,31 +195,37 @@ void mount_vfs(char filelabel[]){
 	}
 	else
 	{
-		printf("%s\n","mountvfs_FAILURE <DATA_FILE_NOT_FOUND>");
+		printf("mountvfs_FAILURE %s\n",ERR_VFS_MOUNT_01); //Data file not found
 		return;
 	}	
 
 
 	if(mount_status==1)
 	{
-		printf("%s\n","mountvfs_FAILURE <VFS_ALREADY_MOUNTED>");
+		printf("mountvfs_FAILURE %s\n",ERR_VFS_MOUNT_03);// vfs already mounted
 		return;
 	}
 
 
 	fp=fopen(path,"rb+");
-	naryRoot();// create root for narry
-	getBstRoot();// create root for bst
+	
 
 	if(fp==NULL)
 	{
-		printf("%s\n","mountvfs_FAILURE <CANNOT_READ_FROM_FILE>");
+		printf("mountvfs_FAILURE %s\n",ERR_VFS_MOUNT_02); // Cannot read from file
 		return;
 	}
-	else
-	{	//mounting
+	//else
+	//{	//mounting
 		
 		//mount_status=1;
+
+
+		
+
+
+		naryRoot();// create root for narry
+		getBstRoot();// create root for bst
 
 		fread(&mheader,sizeof(struct mainheader),1,fp);
 		fread(&f_desc,(sizeof(struct file_descriptor))*(mheader.max_file_desc),1,fp);
@@ -264,8 +234,9 @@ void mount_vfs(char filelabel[]){
 	
 		//printf("Started mounting --- .\n");
 		
+		
 
-		int la;	
+		//int la;	
 		//for(la=0;la<25;la++) {printf("%d .. %s\n",la,f_desc[la].file_name);}
 		//for(la=0;la<25;la++) {printf(" - --------------> %d..%d\n",la,fd_index[la]);}
 
@@ -273,23 +244,42 @@ void mount_vfs(char filelabel[]){
 			if(fd_index[i]!=0)
 			{
 				struct file_descriptor fd;
-				fd=f_desc[i];
+				//fd=f_desc[i];
+
+
+				strcpy(fd.file_name,f_desc[i].file_name);
+				strcpy(fd.file_path,f_desc[i].file_path);
+				strcpy(fd.file_type,f_desc[i].file_type);
+				fd.file_size=f_desc[i].file_size;
+				fd.location_block_number=f_desc[i].location_block_number;
+				fd.file_descriptor_index=f_desc[i].file_descriptor_index;
+
+				//printf("------>>>>>> %d\n",fd_index[i]);
+
+				//printf("----> suhasssssssssssssssss ---> %s\n",fd.file_name);				
+
+
 				int bst=insertToBst(fd);
 				if(bst==0){
 					
 					//printf("\nNOW GOING INTO NARRAY\n");
 					insertToNarry(fd);
+
+				
+				
 				}else clearBst();
 			}
 		}
 
 
 		fclose(fp);
+
+		
 	
 		//printf("Completed mounting.\n");
 		mount_status=1;
 		printf("%s\n","mountvfs_SUCCESS");
-	}
+	//}
 
 	
 }
@@ -326,9 +316,18 @@ void unmount_vfs(char filelabel[]){
 
 	if(strlen(filelabel)==0)
 	{
-		printf("%s\n","unmountvfs_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
+		printf("unmountvfs_FAILURE %s\n",ERR_VFS_UNMOUNT_00); //Insufficient arguments
 		return;
 	}
+
+
+	
+	if(mount_status==0)
+	{
+		printf("unmountvfs_FAILURE %s\n",ERR_VFS_UNMOUNT_03); //vfs not mounted
+		return;
+	}
+
 
 	strcat(path,filelabel);
 
@@ -338,25 +337,21 @@ void unmount_vfs(char filelabel[]){
 	}
 	else
 	{
-		printf("%s\n","unmountvfs_FAILURE <DATA_FILE_NOT_FOUND>");
+		printf("unmountvfs_FAILURE %s\n",ERR_VFS_UNMOUNT_01); // Data file not found
 		return;
 	}
 
 
 
 
-	if(mount_status==0)
-	{
-		printf("%s\n","unmountvfs_FAILURE <VFS_NOT_MOUNTED>");
-		return;
-	}
 
 
 	fp=fopen(path,"rb+");
 
 	if(fp==NULL)
 	{
-		printf("%s\n","unmountvfs_FAILURE <CANNOT_WRITE_TO_FILE>");
+		printf("unmountvfs_FAILURE %s\n",ERR_VFS_UNMOUNT_02);// Cannot write to file
+		return;
 	}
 	else
 	{
@@ -368,6 +363,15 @@ void unmount_vfs(char filelabel[]){
 		//printf("before unmounting\n");
 		//for(l=0;l<25;l++) printf("%d..%s",l,f_desc[l].file_name);
 		// initializing the f_desc and fd_index to null values 
+
+
+		//for(i=0;i<1024;i++)
+		//{
+
+		//	if(fd_index[i]!=0)
+		//	printf("----> suhas dev ----> %s\n",f_desc[i].file_name);
+		//}
+
 
 		for(i=0;i<1024;i++)
 		{
@@ -386,7 +390,9 @@ void unmount_vfs(char filelabel[]){
 		
 		//for(l=0;l<25;l++) printf("%d .. %s\n",l,f_desc[l].file_name);
 
-
+	
+		
+	
 		unmount_filesystem();
 		
 
@@ -404,6 +410,7 @@ void unmount_vfs(char filelabel[]){
 	unmountHash();
 	unmountBSTRoot();
 	fclose(fp);
+	mount_status=0;
 
 	printf("%s\n","unmountvfs_SUCCESS");
 

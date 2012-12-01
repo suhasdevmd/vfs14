@@ -125,30 +125,32 @@ void createvfs ( char *P1, int P2 )
 
 	
 	/* Call the appropriate function with given arguments and display appropriate output on the screen */
-	//printf("calling create_vfs **************\n");
+	
 	create_vfs(P1,P2);
 }
 
 void mountvfs ( char *P1 )
 {
 	/* Call the appropriate function with given arguments and display appropriate output on the screen */
-	//printf("calling mount_vfs.. **************\n");
+	
 	mount_vfs(P1);
 }
 
 void unmountvfs ( char *P1 )
 {
 	/* Call the appropriate function with given arguments and display appropriate output on the screen */
-	//printf("calling unmountvfs **************\n");
+	
 	unmount_vfs(P1);
 }
 
 void makedir ( char *P1, char *P2 )
 {
 	char prefix[100]="ROOT";
+
+	if(strlen(P1)!=0){
 	strcat(prefix,P1);
 	strcpy(P1,prefix);
-
+	}
 
 	if(P1[strlen(P1)-1]=='/')
 	{
@@ -179,10 +181,12 @@ void deletedir ( char *P1 )
 {
 	
 	char prefix[100]="ROOT";
+
+	if(strlen(P1)!=0){
 	strcat(prefix,P1);
 	strcpy(P1,prefix);
-
-
+	}
+	
 	if(P1[strlen(P1)-1]=='/')
 	{
 		char P12[strlen(P1)-1],p1[strlen(P1)];
@@ -208,12 +212,14 @@ void deletedir ( char *P1 )
 void movedir ( char *P1, char *P2 )
 {
 	char prefix[100]="ROOT",prefix1[100]="ROOT";
+	if(strlen(P1)!=0){	
 	strcat(prefix,P1);
 	strcpy(P1,prefix);
-
+	}
+	if(strlen(P2)!=0){
 	strcat(prefix1,P2);
 	strcpy(P2,prefix1);
-
+	}
 
 	if(P1[strlen(P1)-1]=='/')
 	{
@@ -259,9 +265,11 @@ void listdir ( char *P1, int P2, char *P3 )
 {
 
 	char prefix[100]="ROOT";
+	
+	if(strlen(P1)!=0){
 	strcat(prefix,P1);
 	strcpy(P1,prefix);
-		
+	}		
 	
 	
 
@@ -306,9 +314,11 @@ void addfile ( char *P1, char *P2, char *P3 )
 {
 
 	char prefix[100]="ROOT";
+
+	if(strlen(P1)!=0){
 	strcat(prefix,P1);
 	strcpy(P1,prefix);
-
+	}
 
 
 	if(P1[strlen(P1)-1]=='/')
@@ -349,9 +359,11 @@ void addfile ( char *P1, char *P2, char *P3 )
 void listfile ( char *P1, char *P2 )
 {
 	char prefix[100]="ROOT";
+
+	if(strlen(P1)!=0){
 	strcat(prefix,P1);
 	strcpy(P1,prefix);
-	
+	}	
 
 	/*if(P1[strlen(P1)-1]=='/')
 	{
@@ -388,9 +400,11 @@ void listfile ( char *P1, char *P2 )
 void updatefile ( char *P1, char *P2 )
 {
 	char prefix[100]="ROOT";
+
+	if(strlen(P1)!=0){
 	strcat(prefix,P1);
 	strcpy(P1,prefix);
-
+	}
 
 
 	
@@ -429,9 +443,11 @@ void removefile ( char *P1 )
 {
 
 	char prefix[100]="ROOT";
+
+	if(strlen(P1)!=0){
 	strcat(prefix,P1);
 	strcpy(P1,prefix);
-
+	}
 
 
 
@@ -469,13 +485,19 @@ void movefile ( char *P1, char *P2 )
 {
 	
 	char prefix[100]="ROOT";
+
+	if(strlen(P1)!=0){
 	strcat(prefix,P1);
 	strcpy(P1,prefix);
+	}
+
 
 	char prefix1[100]="ROOT";
+
+	if(strlen(P2)!=0){
 	strcat(prefix1,P2);
 	strcpy(P2,prefix1);
-
+	}
 
 
 
@@ -492,13 +514,21 @@ void movefile ( char *P1, char *P2 )
 
 
 void copyfile ( char *P1, char *P2 )
-{	char prefix[100]="ROOT";
+{	
+
+	char prefix[100]="ROOT";
+
+	if(strlen(P1)!=0){
 	strcat(prefix,P1);
 	strcpy(P1,prefix);
+	}
+
 	char prefix1[100]="ROOT";
+
+	if(strlen(P2)!=0){
 	strcat(prefix1,P2);
 	strcpy(P2,prefix1);
-
+	}
 	/* Call the appropriate function with given arguments and display appropriate output on the screen */
 	//printf("calling copyfile *************************\n");
 	copy_file(P1,P2);
@@ -510,9 +540,12 @@ void copyfile ( char *P1, char *P2 )
 
 void exportfile ( char *P1, char *P2 )
 {	char prefix[100]="ROOT";
+
+
+	if(strlen(P1)!=0){
 	strcat(prefix,P1);
 	strcpy(P1,prefix);
-
+	}
 	/*if(P1[strlen(P1)-1]=='/')
 	{
 		char P12[strlen(P1)-1],p1[strlen(P1)];

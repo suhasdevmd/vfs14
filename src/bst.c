@@ -94,7 +94,7 @@ void displayinorder(struct bstnode *nd)
 	if(nd!=NULL)
 	{
 		displayinorder(nd->left);
-		printf("\n%s %s\n",nd->fd_node.file_name,nd->fd_node.file_path);
+		//printf("\n%s %s\n",nd->fd_node.file_name,nd->fd_node.file_path);
 		displayinorder(nd->right);
 	}
 }

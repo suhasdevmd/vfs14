@@ -16,42 +16,48 @@ void add_file ( char *dest_dir_name, char *file_name, char *data )
 	// path of the vfs file system ******************
 //	char vfs_path[100]="/home/suhasdev/Desktop/VfsProject/";
 	char vfs_path[100]="../";
-	strcat(vfs_path,mheader.file_sys_label);
-
-
-
-	struct file_descriptor fd_dir;
-
-
+	
+	
+	
 	strcpy(dir_path,dest_dir_name);
 	strcpy(file,file_name);
 	strcpy(data_file_path,data);
 
-
+	
 
 	if(strlen(dir_path)==0 || strlen(file)==0 || strlen(data_file_path)==0)
 	{
-		printf("%s\n","addfile_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
+		printf("addfile_FAILURE %s\n",ERR_VFS_ADDFILE_00); //insufficient arguments
 		return;
 	}
 
+
+	
 
 	if(mount_status==0)
 	{
-		printf("%s\n","addfile_FAILURE <VFS_NOT_MOUNTED>");
+		printf("addfile_FAILURE %s\n",ERR_VFS_ADDFILE_07); //vfs not mounted
 		return;
 	}
 
-
+	
 
 	for(i=0;i<strlen(file);i++)
 	{
 		if(file[i]=='/')
 		{
-			printf("%s\n","addfile_FAILURE <INVALID_CHARACTER_IN_FILENAME>");
+			printf("addfile_FAILURE %s\n",ERR_VFS_ADDFILE_02); //invalid char in file name
 			return;
 		}
 	}
+
+
+	
+	strcat(vfs_path,mheader.file_sys_label);
+
+	struct file_descriptor fd_dir;
+
+
 
 
 
@@ -67,13 +73,18 @@ void add_file ( char *dest_dir_name, char *file_name, char *data )
 
 
 	
+	
+
+
 	// error code added (not there in errorcodes.h)
 	struct file_descriptor *fd_add=searchAndGetFD(dir_path);
 
+	
 
-	if(strcmp(fd_add->file_type,"file")==0)
+	if(fd_add==NULL);
+	else if(strcmp(fd_add->file_type,"file")==0)
 	{
-		printf("addfile_FAILURE <SOURCE_PATH_CANNOT_BE_FILE>");
+		printf("addfile_FAILURE SOURCE_PATH_CANNOT_BE_FILE\n"); 
 		return;
 	}
 
@@ -94,7 +105,7 @@ void add_file ( char *dest_dir_name, char *file_name, char *data )
 
 	if(j>no_of_blocks)
 	{
-		printf("%s\n","addfile_FAILURE <FILE_SYSTEM_FULL>");
+		printf("addfile_FAILURE %s\n",ERR_VFS_ADDFILE_04); //file syst full
 		return;
 	}	
 
@@ -102,6 +113,29 @@ void add_file ( char *dest_dir_name, char *file_name, char *data )
 
 	fd_dir.location_block_number=j;
 	fd_dir.file_descriptor_index=i;
+
+
+	FILE *fp=fopen(data_file_path,"r");
+		if(fp==NULL)
+		{
+			printf("%s\n","addfile_FAILURE CANNOT_READ_FROM_DATAFILE");
+			return;
+		}
+		else{
+			fseek(fp,0,SEEK_END);
+			int total_size=ftell(fp);
+
+
+			if(total_size > 1024)
+			{
+				printf("addfile_FAILURE %s\n",ERR_VFS_ADDFILE_06); //file too large
+				return;
+			}
+		}
+
+
+
+
 
 	int bst=insertToBst(fd_dir);
 
@@ -119,8 +153,12 @@ void add_file ( char *dest_dir_name, char *file_name, char *data )
 		//block_ptr_array[fd_dir.location_block_number]=blk;
 	
 		
+		
+
 		//read from file and write into the block
-		FILE *fp=fopen(data_file_path,"r");
+
+
+		//FILE *fp=fopen(data_file_path,"r");
 		if(fp==NULL)
 		{
 			printf("%s\n","addfile_FAILURE <CANNOT_READ_FROM_DATAFILE>");
@@ -136,7 +174,7 @@ void add_file ( char *dest_dir_name, char *file_name, char *data )
 
 			if(total_size > 1024)
 			{
-				printf("%s\n","addfile_FAILURE <FILE_TOO_LARGE>");
+				printf("addfile_FAILURE %s\n",ERR_VFS_ADDFILE_06); //file too large
 				return;
 			}
 
@@ -173,7 +211,8 @@ void add_file ( char *dest_dir_name, char *file_name, char *data )
 
 			if((fptr=fopen(vfs_path,"rb+"))==NULL)
 			{
-				printf("addfile_FAILURE <VFS_DOESNOT_EXIST>\n");
+				printf("addfile_FAILURE %s\n",ERR_VFS_ADDFILE_05); //prev : vfs not exists
+				return;
 			}
 			else
 			{
@@ -198,7 +237,7 @@ void add_file ( char *dest_dir_name, char *file_name, char *data )
 	}else
 	{
 		clearBst();
-		printf("%s\n","addfile_FAILURE <FILE_ALREADY_EXISTS>");	
+		printf("addfile_FAILURE %s\n",ERR_VFS_ADDFILE_03); //file already exists
 		return;
 	}
 
@@ -270,14 +309,14 @@ void list_file ( char *file_path, char *output_file_name )
 
 	if(strlen(file_pth)==0 || strlen(output_file)==0)
 	{
-		printf("%s\n","listfile_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
+		printf("listfile_FAILURE %s\n",ERR_VFS_LISTFILE_00); //insufficient args
 		return;
 	}
 
 
 	if(mount_status==0)
 	{
-		printf("%s\n","listfile_FAILURE <VFS_NOT_MOUNTED>");
+		printf("listfile_FAILURE %s\n",ERR_VFS_LISTFILE_04); //vfs not mounted
 		return;
 	}
 	
@@ -286,7 +325,7 @@ void list_file ( char *file_path, char *output_file_name )
 
 	// condition to check if the file is text file ?????? //
 
-	//	 function for this should be written          //
+	//	 					      //
 
 	// ***************************************************//
 
@@ -298,7 +337,7 @@ void list_file ( char *file_path, char *output_file_name )
 
 	if(fdptr==NULL)
 	{
-		printf("%s\n","listfile_FAILURE <SOURCE_FILE_PATH_NOT_FOUND>");
+		printf("listfile_FAILURE %s\n",ERR_VFS_LISTFILE_01); //source file path not found
 		return;
 	}
 	else
@@ -336,7 +375,7 @@ void list_file ( char *file_path, char *output_file_name )
 
 				if(fp1==NULL)
 				{
-					printf("%s\n","listfile_FAILURE <CANNOT_CREATE_OUTPUTFILE>");
+					printf("listfile_FAILURE %s\n",ERR_VFS_LISTFILE_03); //cannot create output file
 					return;
 				}
 
@@ -352,7 +391,7 @@ void list_file ( char *file_path, char *output_file_name )
 		}
 		else 
 		{
-			printf("%s\n","listfile_FAILURE <NOT_A_TEXT_FILE>"); // to be verified		
+			printf("listfile_FAILURE %s\n",ERR_VFS_LISTFILE_02); // not a text file	
 			return;
 		}
 	}		
@@ -390,14 +429,14 @@ void update_file ( char *file_path, char *data )
 
 	if(strlen(file_pth)==0 || strlen(data_file_path)==0)
 	{
-		printf("%s\n","updatefile_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
+		printf("updatefile_FAILURE %s\n",ERR_VFS_UPDATEFILE_00); //insufficient args
 		return;
 	}
 
 
 	if(mount_status==0)
 	{
-		printf("%s\n","updatefile_FAILURE <VFS_NOT_MOUNTED>");
+		printf("updatefile_FAILURE %s\n",ERR_VFS_UPDATEFILE_04); //vfs not mounted
 		return;
 	}
 
@@ -412,16 +451,16 @@ void update_file ( char *file_path, char *data )
 	
 	if(fdptr==NULL)
 	{
-		printf("%s\n","updatefile_FAILURE <INTERNAL_FILE_NOT_FOUND>");
+		printf("updatefile_FAILURE %s\n",ERR_VFS_UPDATEFILE_01); //internal file not found
 		return;
 	}
 	else
 	{
 		
-		FILE *fp=fopen(data_file_path,"r+");
+		FILE *fp=fopen(data_file_path,"r");
 		if(fp==NULL)
 		{
-			printf("%s\n","updatefile_FAILURE <EXTERNAL_FILE_NOT_FOUND>");
+			printf("updatefile_FAILURE %s\n",ERR_VFS_UPDATEFILE_02); //external file not found
 			return;			
 		}
 		else
@@ -439,7 +478,7 @@ void update_file ( char *file_path, char *data )
 
 			if(number>1024)
 			{
-				printf("%s\n","updatefile_FAILURE <EXTERNAL_FILE_TOO_LARGE>");
+				printf("updatefile_FAILURE %s\n",ERR_VFS_UPDATEFILE_03); //external file too large
 				return;
 			}
 
@@ -500,20 +539,20 @@ void remove_file ( char *file_path)
 	strcpy(dir_path,file_path);
 	int i;
 
-	// whether it should be || in place of && in if clause ?????????? ---- Suhas
+	
 
 
 
 	if(strlen(dir_path)==0)
 	{
-		printf("%s\n","removefile_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
+		printf("removefile_FAILURE %s\n",ERR_VFS_REMOVEFILE_00); //vfs insufficient args
 		return;
 	}
 
 
 	if(mount_status==0)
 	{
-		printf("%s\n","removefile_FAILURE <VFS_NOT_MOUNTED>");
+		printf("removefile_FAILURE %s\n",ERR_VFS_REMOVEFILE_02); //vfs not mounted
 		return;
 	}
 
@@ -526,9 +565,16 @@ void remove_file ( char *file_path)
 	else 
 	{	
 		int a=searchIfPathExists(dir_path);
+
+		//printf(" %s ---------> aaaaaaaa %d\n",dir_path,a);
+		//displayNaryMain();
+		//displayBSTMain();
+
 		//printf("\naaaaaaaaaaaaaaa=============    %d\n",a);
 		if(a==1){
 			//printf("\nyes path exists\n");
+
+
 			del_dir_file(dir_path);//naray deletion
 			//printf("\n deleted from narray major achievement\n");
 			//for(i=0;i<fd_count;i++)
@@ -539,7 +585,7 @@ void remove_file ( char *file_path)
 		}
 		else 
 		{	
-			printf("%s\n","removefile_FAILURE <CANNOT_FIND_SPECIFIED_FILE>");
+			printf("removefile_FAILURE %s\n",ERR_VFS_REMOVEFILE_01); //cannot find specified file
 			return;
 		}
 
@@ -574,7 +620,24 @@ void move_file ( char *source_file_path, char *dest_file_path ){
 	char sourcePath[200];
 	strcpy(sourcePath,source_file_path);	
 	char destPath[200];
-	strcpy(destPath,dest_file_path);	
+	strcpy(destPath,dest_file_path);
+
+
+	if(strlen(sourcePath)==0 || strlen(destPath)==0)
+	{
+		printf("movefile_FAILURE %s\n",ERR_VFS_MOVEFILE_00); //insufficient args
+		return;
+	}
+
+
+	if(mount_status==0)
+	{
+		printf("movefile_FAILURE %s\n",ERR_VFS_MOVEFILE_06); //vfs not mounted
+		return;
+	}
+
+
+	
 	struct file_descriptor * fdptr;
 	struct file_descriptor FD;
 	fdptr= searchAndGetFD(sourcePath);
@@ -607,7 +670,7 @@ void move_file ( char *source_file_path, char *dest_file_path ){
 	int a=searchIfPathExists(destFold);
 	if(a==0)
 	{
-		printf("%s\n","movefile_FAILURE <CANNOT_FIND_DESTINATION_PATH>");
+		printf("movefile_FAILURE %s\n",ERR_VFS_MOVEFILE_02); //cannot find dest path
 		return;	
 	}
 	
@@ -618,18 +681,7 @@ void move_file ( char *source_file_path, char *dest_file_path ){
 	strcat(vfs_path,mheader.file_sys_label);
 
 	
-	if(strlen(sourcePath)==0 || strlen(destPath)==0)
-	{
-		printf("%s\n","movefile_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
-		return;
-	}
-
-
-	if(mount_status==0)
-	{
-		printf("%s\n","movefile_FAILURE <VFS_NOT_MOUNTED>");
-		return;
-	}
+	
 
 
 
@@ -637,7 +689,7 @@ void move_file ( char *source_file_path, char *dest_file_path ){
 
 	if(fdptr==NULL)
 	{
-		printf("%s\n","movefile_FAILURE <CANNOT_FIND_SOURCEFILE>");
+		printf("movefile_FAILURE %s\n",ERR_VFS_MOVEFILE_01); //cannot find source file
 		return;
 	}	
 
@@ -645,12 +697,19 @@ void move_file ( char *source_file_path, char *dest_file_path ){
 		// to check if the dest file already exists. -- added by suhas 23 nov 2012 9 am
 
 
-		struct file_descriptor * fdptr_dest;
-		fdptr_dest=searchAndGetFD(destPath);
-
+		
 		
 
+		struct file_descriptor * fdptr_dest;
+		fdptr_dest=searchAndGetFD(destPath);
+		
+
+		if(fdptr_dest==NULL){
+			printf("movefile_FAILURE %s\n",ERR_VFS_MOVEFILE_02); //cannot find dest path
+			return;
+		}
 			
+	
 		strcpy(FD.file_name,tokens[count-1]);
 		strcpy(FD.file_path,destFold);
 		strcpy(FD.file_type,fdptr->file_type);
@@ -661,16 +720,17 @@ void move_file ( char *source_file_path, char *dest_file_path ){
 		i=get_file_descriptor_index();
 		j=getFreeListIndex();
 
-
+		
 		FD.location_block_number=j;
 		FD.file_descriptor_index=i;
 		a=searchIfPathExists(destPath);
 		if(a==1)
-		{
-			remove_file_new(dest_file_path);		
+		{	
+			remove_file_new(dest_file_path);
+			
 		}
 		int bst=insertToBst(FD);
-
+		
 		if(bst==0)
 		{	
 		
@@ -765,14 +825,14 @@ void move_fileold ( char *source_file_path, char *dest_file_path )
 
 	if(strlen(sourcePath)==0 || strlen(destPath)==0)
 	{
-		printf("%s\n","movefile_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
+		printf("movefile_FAILURE %s\n",ERR_VFS_MOVEFILE_00); //insufficient args
 		return;
 	}
 
 
 	if(mount_status==0)
 	{
-		printf("%s\n","movefile_FAILURE <VFS_NOT_MOUNTED>");
+		printf("movefile_FAILURE %s\n",ERR_VFS_MOVEFILE_06); //vfs not mounted
 		return;
 	}
 
@@ -785,7 +845,7 @@ void move_fileold ( char *source_file_path, char *dest_file_path )
 		i=searchIfPathExists(sourcePath);
 		if(i==0)
 		{
-			printf("%s\n","movefile_FAILURE <CANNOT_FIND_SOURCEFILE>");
+			printf("movefile_FAILURE %s\n",ERR_VFS_MOVEFILE_01); //cannot find source file
 			return;
 		}
 
@@ -793,7 +853,7 @@ void move_fileold ( char *source_file_path, char *dest_file_path )
 		j=searchIfPathExists(destPath);
 		if(j==0)
 		{
-			printf("%s\n","movefile_FAILURE <CANNOT_FIND_DESTINATION_PATH>");
+			printf("movefile_FAILURE %s\n",ERR_VFS_MOVEFILE_02); //cannot find dest path
 			return;
 		}
 
@@ -882,7 +942,24 @@ void copy_file ( char *source_file_path, char *dest_file_path )
 	char sourcePath[200];
 	strcpy(sourcePath,source_file_path);	
 	char destPath[200];
-	strcpy(destPath,dest_file_path);	
+	strcpy(destPath,dest_file_path);
+
+
+	if(strlen(sourcePath)==0 || strlen(destPath)==0)
+	{
+		printf("copyfile_FAILURE %s\n",ERR_VFS_COPYFILE_00); //insufficient args
+		return;
+	}
+
+
+	if(mount_status==0)
+	{
+		printf("copyfile_FAILURE %s\n",ERR_VFS_COPYFILE_05); //vfs not mounted
+		return;
+	}
+
+
+	
 	struct file_descriptor * fdptr;
 	struct file_descriptor FD;
 	fdptr= searchAndGetFD(sourcePath);
@@ -915,7 +992,7 @@ void copy_file ( char *source_file_path, char *dest_file_path )
 	int a=searchIfPathExists(destFold);
 	if(a==0)
 	{
-		printf("%s\n","copyfile_FAILURE <CANNOT_FIND_DESTINATIONPATH>");
+		printf("copyfile_FAILURE %s\n",ERR_VFS_COPYFILE_02); //cannot find dest path
 		return;	
 	}
 	
@@ -926,18 +1003,7 @@ void copy_file ( char *source_file_path, char *dest_file_path )
 	strcat(vfs_path,mheader.file_sys_label);
 
 	
-	if(strlen(sourcePath)==0 || strlen(destPath)==0)
-	{
-		printf("%s\n","copyfile_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
-		return;
-	}
-
-
-	if(mount_status==0)
-	{
-		printf("%s\n","copyfile_FAILURE <VFS_NOT_MOUNTED>");
-		return;
-	}
+	
 
 
 
@@ -945,14 +1011,14 @@ void copy_file ( char *source_file_path, char *dest_file_path )
 
 	if(fdptr==NULL)
 	{
-		printf("%s\n","copyfile_FAILURE <CANNOT_FIND_SOURCEFILE>");
+		printf("copyfile_FAILURE %s\n",ERR_VFS_COPYFILE_01); //cannot find source file
 		return;
 	}
 
 
 	if(fdptr->location_block_number==-1)
 	{
-		printf("%s\n","copyfile_FAILURE <CANNOT_COPY_DIR_TO_FILE>");
+		printf("copyfile_FAILURE %s\n",ERR_VFS_COPYFILE_03); //cannot copy directory to file
 		return;
 	}	
 
@@ -981,7 +1047,7 @@ void copy_file ( char *source_file_path, char *dest_file_path )
 
 		if(j>no_of_blocks)
 		{
-			printf("%s\n","copyfile_FAILURE <FILE_SYSTEM_FULL>");
+			printf("copyfile_FAILURE %s\n",ERR_VFS_COPYFILE_04); //file system full
 			return;
 		}
 
@@ -1080,14 +1146,14 @@ void export_file ( char *vfs_file_path, char *harddisk_path )
 
 	if(strlen(file_pth)==0 || strlen(output_file)==0)
 	{
-		printf("%s\n","exportfile_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
+		printf("exportfile_FAILURE %s\n",ERR_VFS_EXPORTFILE_00); //insufficient args
 		return;
 	}
 
 
 	if(mount_status==0)
 	{
-		printf("%s\n","exportfile_FAILURE <VFS_NOT_MOUNTED>");
+		printf("exportfile_FAILURE %s\n",ERR_VFS_EXPORTFILE_04); //vfs not mounted
 		return;
 	}
 
@@ -1103,7 +1169,7 @@ void export_file ( char *vfs_file_path, char *harddisk_path )
 
 	if(fdptr==NULL)
 	{
-		printf("%s\n","exportfile_FAILURE <CANNOT_FIND_SOURCEFILE>");
+		printf("exportfile_FAILURE %s\n",ERR_VFS_EXPORTFILE_01); //cannot find source file
 		return;
 	}
 	else
@@ -1114,7 +1180,7 @@ void export_file ( char *vfs_file_path, char *harddisk_path )
 
 		if(fdptr->location_block_number==-1)
 		{
-			printf("%s\n","exportfile_FAILURE <CANNOT_EXPORT_DIR>");
+			printf("exportfile_FAILURE %s\n",ERR_VFS_EXPORTFILE_03); //cannot export dir
 			return;			
 		}		
 
@@ -1124,7 +1190,7 @@ void export_file ( char *vfs_file_path, char *harddisk_path )
 		FILE *fp=fopen(vfs_path,"rb+");
 		if(fp==NULL)
 		{
-			printf("%s\n","exportfile_FAILURE  <CANNOT_FIND_SOURCEFILE>");
+			printf("exportfile_FAILURE %s\n",ERR_VFS_EXPORTFILE_01); //cannot find src file
 			return;
 		}
 		else
@@ -1140,7 +1206,7 @@ void export_file ( char *vfs_file_path, char *harddisk_path )
 
 			if(fp1==NULL)
 			{
-				printf("%s\n","exportfile_FAILURE <CANNOT_CREATE_OUTPUTFILE>");
+				printf("exportfile_FAILURE %s\n",ERR_VFS_EXPORTFILE_02); //cannot create output file
 				return;
 			}
 	
@@ -1170,6 +1236,22 @@ void export_file ( char *vfs_file_path, char *harddisk_path )
 
 
 
+// 
+
+char* removeroot(char* path){
+	char* temp;
+	int len = strlen(path);
+	//printf("\nLength is : %d\n",len);
+	int i;
+	for( i=0 ; i<len ; i++){
+		if(*(path + i) == '/'){
+			temp = path + i;
+			return temp;
+		}
+	}
+}
+
+
 
 
 
@@ -1184,23 +1266,33 @@ void search_file ( char *file_name, char *output_File_name )
 	int i;
 	char substring[200];
 	char out_file[200];
+	char upd_path[100];
 	strcpy(substring,file_name);
 	strcpy(out_file,output_File_name);
 
 
 	if(strlen(substring)==0 || strlen(out_file)==0)
 	{
-		printf("%s\n","searchfile_FAILURE <VFS_INSUFFICIENT_ARGUMENTS>");
+		printf("searchfile_FAILURE %s\n",ERR_VFS_SEARCHFILE_00); //insufficient args
 		return;
 	}
 
 
 	if(mount_status==0)
 	{
-		printf("%s\n","searchfile_FAILURE <VFS_NOT_MOUNTED>");
+		printf("searchfile_FAILURE %s\n",ERR_VFS_SEARCHFILE_02); //vfs not mounted
 		return;
 	}
 
+
+	FILE *fp=fopen(out_file,"w");
+
+	if(fp==NULL)
+	{
+		printf("searchfile_FAILURE <CANNOT_CREATE_OUTPUT_FILE>\n");
+		return;
+	
+	}
 
 
 	searchSubstringFile(substring);
@@ -1244,19 +1336,13 @@ void search_file ( char *file_name, char *output_File_name )
 
 	//printf("%s -- > out\n",out_file);
 
-	FILE *fp=fopen(out_file,"w");
-
-	if(fp==NULL)
-	{
-		printf("searchfile_FAILURE <CANNOT_CREATE_OUTPUT_FILE>\n");
-		return;
 	
-	}
-	else
-	{
 
-		strcat(substring," found in the following locations : \n\n");
-		fwrite(substring,strlen(substring),1,fp);
+	
+//	else
+//	{
+
+		
 
 
 		/*for(i=0;i<listPathsIndex;i++){
@@ -1273,15 +1359,27 @@ void search_file ( char *file_name, char *output_File_name )
 
 		}}*/
 
+		if(listPathsIndex==0){
+			printf("searchfile_FAILURE FILE_DOESNOT_EXIST\n");
+			fclose(fp);
+			return;
+		}
+
+		strcat(substring," found in the following locations : \n\n");
+		fwrite(substring,strlen(substring),1,fp);
+
 
 		for(i=0;i<listPathsIndex;i++){
 			//strcat(i+1,listPaths[i]);
-			fwrite(listPaths[i],strlen(listPaths[i]),1,fp);
+			
+			strcpy(upd_path,removeroot(listPaths[i]));
+			fwrite(upd_path,strlen(upd_path),1,fp);
+			//fwrite(listPaths[i],strlen(listPaths[i]),1,fp);
 			fwrite("\n",1,1,fp);
 
 		}
 		fclose(fp);
-	}		
+	//}		
 
 	
 
@@ -1306,7 +1404,7 @@ void remove_file_new ( char *file_path)
 	strcpy(dir_path,file_path);
 	int i;
 
-
+	
 
 
 	if(strcmp(dir_path,"ROOT")==0 || strcmp(dir_path,"ROOT/")==0)
@@ -1314,15 +1412,19 @@ void remove_file_new ( char *file_path)
 	else 
 	{	
 		int a=searchIfPathExists(dir_path);
-		////printf("\naaaaaaaaaaaaaaa=============    %d\n",a);
+		
 		if(a==1){
 			//printf("\nyes path exists\n");
+			
+			
+
 			del_dir_file(dir_path);//naray deletion
+			
 			//printf("\n deleted from narray major achievement\n");
 			//for(i=0;i<fd_count;i++)
 			//printf("\n		name :%s   and path=%s \n",Fdesc[i].file_name,Fdesc[i].file_path);
 
-
+		
 
 		}
 		else 

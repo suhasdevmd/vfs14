@@ -8,6 +8,7 @@
 #include "n-ary.h"
 #include "HashTable.h"
 #include "bst.h"
+#include "vfs_errorcodes.h"
 
 
 //int free_list[1024]={0};
